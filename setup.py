@@ -1,8 +1,5 @@
 import setuptools
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
 
 setuptools.setup(
      name='git-forest',  
@@ -11,8 +8,6 @@ setuptools.setup(
      author="Francesco Gatti",
      author_email="gattifrancesco@hotmail.it",
      description="manage subtree",
-     long_description=long_description,
-     long_description_content_type="text/markdown",
      url="https://github.com/ceccocats/git-forest",
      packages=setuptools.find_packages(),
      classifiers=[
