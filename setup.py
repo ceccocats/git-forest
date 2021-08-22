@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
      name='git-forest',  
-     version='0.1',
+     version='0.1-1',
      scripts=['git-forest'] ,
      author="Francesco Gatti",
      author_email="gattifrancesco@hotmail.it",
