@@ -20,6 +20,14 @@ git forest pull all master
 git forest push all master
 ```
 
+## install
+You can install from pip
+```
+pip3 install git-forest
+```
+or just copy git-forest file into a `PATH` folder
+
+
 ## build
 ```
 python3 setup.py bdist_wheel
