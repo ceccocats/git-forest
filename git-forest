@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+# PYTHON_ARGCOMPLETE_OK
+import argcomplete, argparse, yaml
+
+def readData():
+    with open(".gitforest", 'r') as config:
+        try:
+            return yaml.safe_load(config)
+        except yaml.YAMLError as exc:
+            print(exc)
+            return None
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest='subparser')
+
+    parser_list = subparsers.add_parser('list', help="list all avaible repos")
+    parser_list.add_argument('-v', '--verbose', action="store_true")
+
+    parser_pull = subparsers.add_parser('pull', help="pull from specified repo")
+    parser_pull.add_argument('repo', help='repo to pull')
+    parser_pull.add_argument("branch", help='branch to pull')
+    
+    parser_push = subparsers.add_parser('push', help="push from specified repo")
+    parser_push.add_argument('repo', help='repo to push')
+    parser_push.add_argument("branch", help='branch to pull')
+
+    args = parser.parse_args()
+
+    data = readData()
+
+    if(args.subparser == "list"):
+        for k in data.keys():
+            print(k)
+            if(args.verbose):
+                print("\t", data[k]["prefix"], "->", data[k]["url"])
+    elif(args.subparser == "pull"):
+        if args.repo in data.keys():
+            prefix = data[args.repo]["prefix"]
+            url = data[args.repo]["url"]
+            cmd = "git subtree pull --prefix " + prefix + " " + url + " " + args.branch 
+            print(cmd)
+        else:
+            print(args.repo, "not in .gitsubtree, please add")
+    elif(args.subparser == "push"):
+        if args.repo in data.keys():
+            prefix = data[args.repo]["prefix"]
+            url = data[args.repo]["url"]
+            cmd = "git subtree push --prefix " + prefix + " " + url + " " + args.branch 
+            print(cmd)
+        else:
+            print(args.repo, "not in .gitsubtree, please add")
