@@ -17,6 +17,18 @@ def readData():
     except FileNotFoundError as exc:
         print("this folder does not contain a .gitforest file")
 
+def doCmdOnRepo(cmd, repo, branch, data):
+    print(cmd + " repo: " + repo + " branch: " + branch)
+    if repo in data.keys():
+        prefix = data[repo]["prefix"]
+        url = data[repo]["url"]
+        full_cmd = "git subtree " + cmd + " --prefix " + prefix + " " + url + " " + branch 
+        print(full_cmd)
+        return runCommand(full_cmd)
+    else:
+        print(repo, "not in .gitforest, please add")
+    return -1
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='subparser')
@@ -25,7 +37,7 @@ if __name__ == '__main__':
     parser_list.add_argument('-v', '--verbose', action="store_true")
 
     parser_pull = subparsers.add_parser('pull', help="pull from specified repo")
-    parser_pull.add_argument('repo', help='repo to pull')
+    parser_pull.add_argument('repo', help='repo to pull (\"all\" to pull from all in list)')
     parser_pull.add_argument("branch", help='branch to pull')
     
     parser_push = subparsers.add_parser('push', help="push from specified repo")
@@ -44,21 +56,19 @@ if __name__ == '__main__':
             print(k)
             if(args.verbose):
                 print("\t", data[k]["prefix"], "->", data[k]["url"])
+
     elif(args.subparser == "pull"):
-        if args.repo in data.keys():
-            prefix = data[args.repo]["prefix"]
-            url = data[args.repo]["url"]
-            cmd = "git subtree pull --prefix " + prefix + " " + url + " " + args.branch 
-            print(cmd)
-            runCommand(cmd)
+        if(args.repo == "all"):
+            for k in data.keys():
+                if doCmdOnRepo("pull", k, args.branch, data) != 0:
+                    break
         else:
-            print(args.repo, "not in .gitsubtree, please add")
+            doCmdOnRepo("pull", args.repo, args.branch, data)
+
     elif(args.subparser == "push"):
-        if args.repo in data.keys():
-            prefix = data[args.repo]["prefix"]
-            url = data[args.repo]["url"]
-            cmd = "git subtree push --prefix " + prefix + " " + url + " " + args.branch 
-            print(cmd)
-            runCommand(cmd)
+        if(args.repo == "all"):
+            for k in data.keys():
+                if doCmdOnRepo("push", k, args.branch, data) != 0:
+                    break
         else:
-            print(args.repo, "not in .gitsubtree, please add")
+            doCmdOnRepo("push", args.repo, args.branch, data)
