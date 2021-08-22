@@ -8,6 +8,18 @@ tkCommon:
     url: "gitlab@git.hipert.unimore.it:tk/core/tkCommon.git"
 ```
 
+## usage
+once you have your `.gitforest` file compiled you can easly pull and push subtrees:
+```
+git forest pull tkCommon master
+git forest push tkCommon master
+```
+you can also pull and push to all the repos using `all` instead of repo name:
+```
+git forest pull all master
+git forest push all master
+```
+
 ## build
 ```
 python3 setup.py bdist_wheel
