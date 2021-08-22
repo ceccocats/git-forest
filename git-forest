@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 # PYTHON_ARGCOMPLETE_OK
 import argcomplete, argparse, yaml
+import os
+
+def runCommand(cmd):
+    return os.system(cmd)
 
 def readData():
-    with open(".gitforest", 'r') as config:
-        try:
-            return yaml.safe_load(config)
-        except yaml.YAMLError as exc:
-            print(exc)
-            return None
-
+    try:
+        with open(".gitforest", 'r') as config:
+            try:
+                return yaml.safe_load(config)
+            except yaml.YAMLError as exc:
+                print(exc)
+                return None
+    except FileNotFoundError as exc:
+        print("this folder does not contain a .gitforest file")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -29,6 +35,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     data = readData()
+    if data is None:
+        exit()
+    
 
     if(args.subparser == "list"):
         for k in data.keys():
@@ -41,6 +50,7 @@ if __name__ == '__main__':
             url = data[args.repo]["url"]
             cmd = "git subtree pull --prefix " + prefix + " " + url + " " + args.branch 
             print(cmd)
+            runCommand(cmd)
         else:
             print(args.repo, "not in .gitsubtree, please add")
     elif(args.subparser == "push"):
@@ -49,5 +59,6 @@ if __name__ == '__main__':
             url = data[args.repo]["url"]
             cmd = "git subtree push --prefix " + prefix + " " + url + " " + args.branch 
             print(cmd)
+            runCommand(cmd)
         else:
             print(args.repo, "not in .gitsubtree, please add")
